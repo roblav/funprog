@@ -25,7 +25,7 @@ object Lists {
    */
     def sum(xs: List[Int]): Int =
       if(xs.isEmpty) 0
-      else (xs.head: Int + sum(xs.tail: List[Int]))
+      else xs.head + sum(xs.tail)
   
   /**
    * This method returns the largest element in a list of integers. If the
@@ -40,7 +40,12 @@ object Lists {
    * @return The largest element in `xs`
    * @throws java.util.NoSuchElementException if `xs` is an empty list
    */
-    def max(xs: List[Int]): Int =
-      if(xs.isEmpty) 0
-      else(xs.head >= max(xs.tail) )
-  }
+  def max(xs: List[Int]): Int =
+    if(xs.isEmpty) 0
+    else returnLargest(xs.head,xs.tail)
+
+  def returnLargest(maxVal:Int,y:List[Int]):Int =
+    if(y.isEmpty) maxVal
+    else returnLargest(if(maxVal >= y.head) maxVal else y.head, y.tail)
+
+}
