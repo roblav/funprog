@@ -8,5 +8,6 @@ val d = new Tweet("d", "d body", 9)
 val set4c = set3.incl(c)
 val set4d = set3.incl(d)
 val set5 = set4c.incl(d)
-set4c.mostRetweeted(new Tweet("", "", 0))
+set4c.mostRetweeted
+//GoogleVsApple.trending foreach println
 
