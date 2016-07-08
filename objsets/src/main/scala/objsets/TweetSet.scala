@@ -65,7 +65,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def mostRetweeted(x: Tweet): Tweet
+    def mostRetweeted: Tweet
 
   
   /**
@@ -78,7 +78,8 @@ abstract class TweetSet {
    * and be implemented in the subclasses?
    */
     def descendingByRetweet: TweetList
-  
+
+    def empty: Boolean
   /**
    * The following methods are already implemented
    */
@@ -105,6 +106,8 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+
 }
 
 class Empty extends TweetSet {
@@ -114,8 +117,11 @@ class Empty extends TweetSet {
 
   def union(that: TweetSet): TweetSet = that
 
-  def mostRetweeted(x: Tweet): Tweet = new Tweet("", "", 0)
+  def mostRetweeted: Tweet = throw new NoSuchElementException
 
+  def descendingByRetweet: TweetList = Nil
+
+  def empty: Boolean = true
   /**
    * The following methods are already implemented
    */
@@ -145,17 +151,25 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   def union(that: TweetSet): TweetSet =
     ((left union right) union that) incl elem
 
-  def mostRetweeted(x: Tweet): Tweet =
-    if(left.mostRetweeted(elem).retweets < x.retweets && x.retweets < right.mostRetweeted(elem).retweets) right.mostRetweeted(elem)
-    else if(left.mostRetweeted(elem).retweets > x.retweets && x.retweets > right.mostRetweeted(elem).retweets) left.mostRetweeted(elem)
-    else elem
+  def mostRetweeted: Tweet = {
+    lazy val leftMost = left.mostRetweeted
+    lazy val rightMost = right.mostRetweeted
 
-  def descendingByRetweet: TweetList =
-    //Create a new TweetList
-    //Create a recursive loop that will remove the mostRetweeted and add it to the head of the list
-    if(this.text == "")
-    remove(mostRetweeted(elem))
-    new Cons(mostRetweeted(elem), new Nil)
+    if( !left.empty && leftMost.retweets > elem.retweets )
+      if( !right.empty && rightMost.retweets > leftMost.retweets )
+        rightMost
+      else
+        leftMost
+    else if( !right.empty && rightMost.retweets > elem.retweets )
+      rightMost
+    else
+      elem
+  }
+
+  def empty: Boolean = true
+
+  def descendingByRetweet: TweetList = new Cons(mostRetweeted, remove(mostRetweeted).descendingByRetweet)
+
 
   /**
    * The following methods are already implemented
