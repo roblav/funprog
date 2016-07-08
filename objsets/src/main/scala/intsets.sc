@@ -4,6 +4,7 @@ abstract class IntSet{
   def union(other: IntSet): IntSet
   def filter(p: Int => Boolean): IntSet
   def filterAcc(p: Int => Boolean, acc: IntSet): IntSet
+  def largest:Int
 }
 
 object Empty extends IntSet{
@@ -13,6 +14,7 @@ object Empty extends IntSet{
   override def toString = "."
   def filter(p: Int => Boolean): IntSet = Empty
   def filterAcc(p: Int => Boolean, acc: IntSet): IntSet = acc
+  def largest: Int = 0
 }
 
 class NonEmpty(elem: Int, left: IntSet, right: IntSet) extends IntSet{
@@ -39,6 +41,11 @@ class NonEmpty(elem: Int, left: IntSet, right: IntSet) extends IntSet{
     //else continue left and right
     if(p(elem)) (left union right).filterAcc(p, acc incl elem)
     else (left union right).filterAcc(p, acc)
+
+  def largest: Int =
+    if(left.largest < elem && elem < right.largest) right.largest
+    else if(left.largest > elem && elem > right.largest) left.largest
+    else elem
 }
 
 val t1 = new NonEmpty(1, Empty, Empty)
@@ -51,3 +58,4 @@ val t7 = t6.union(t5)
 
 //Return a n IntSet containing all ints greater than 1
 val test = t7.filter(x => x > 1)
+t7.largest

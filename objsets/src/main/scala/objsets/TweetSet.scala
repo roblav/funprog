@@ -65,7 +65,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def mostRetweeted: Int
+    def mostRetweeted(x: Tweet): Tweet
 
   
   /**
@@ -77,7 +77,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def descendingByRetweet: TweetList = ???
+    def descendingByRetweet: TweetList
   
   /**
    * The following methods are already implemented
@@ -114,7 +114,8 @@ class Empty extends TweetSet {
 
   def union(that: TweetSet): TweetSet = that
 
-  def mostRetweeted: Int = 0
+  def mostRetweeted(x: Tweet): Tweet = new Tweet("", "", 0)
+
   /**
    * The following methods are already implemented
    */
@@ -144,9 +145,17 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   def union(that: TweetSet): TweetSet =
     ((left union right) union that) incl elem
 
-  def mostRetweeted: Int =
-    //Show the number of retweets
-    elem.retweets
+  def mostRetweeted(x: Tweet): Tweet =
+    if(left.mostRetweeted(elem).retweets < x.retweets && x.retweets < right.mostRetweeted(elem).retweets) right.mostRetweeted(elem)
+    else if(left.mostRetweeted(elem).retweets > x.retweets && x.retweets > right.mostRetweeted(elem).retweets) left.mostRetweeted(elem)
+    else elem
+
+  def descendingByRetweet: TweetList =
+    //Create a new TweetList
+    //Create a recursive loop that will remove the mostRetweeted and add it to the head of the list
+    if(this.text == "")
+    remove(mostRetweeted(elem))
+    new Cons(mostRetweeted(elem), new Nil)
 
   /**
    * The following methods are already implemented
