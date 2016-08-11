@@ -32,7 +32,6 @@ object Huffman {
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
 
 
-
   // Part 2: Generating Huffman trees
 
   /**
